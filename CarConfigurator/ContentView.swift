@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Hello-AR
+//  CarConfigurator
 //
 //  Created by Angel Docampo on 10/10/25.
 //
@@ -9,11 +9,23 @@ import SwiftUI
 import RealityKit
 
 
+
 struct ContentView : View {
 
     
-    @State private var boxMaterial:SimpleMaterial = SimpleMaterial(color: .red, roughness: 0.15, isMetallic: true)
-    @State private var mercedesModel: Entity?
+    
+    @State private var carX:Float = 0
+    @State private var carY:Float = 0
+    @State private var carZ:Float = 0
+    @State private var carScale:Float = 1
+    @State private var carRotation:Float = 0
+    @State private var carSelected = 0
+    
+    // MARK: - PROPERTIES
+       
+    @ObservedObject private var carsViewModel : CarsViewModel =  CarsViewModel()
+       
+       // MARK: - BODY
     
     var body: some View {
         
@@ -22,34 +34,20 @@ struct ContentView : View {
 
             // Create a cube model
             let model = Entity()
-            let mesh = MeshResource.generateBox(size: 0.1, cornerRadius: 0.005)
-            let material = boxMaterial
+            let mesh = MeshResource.generateText("Error Loading Model!", extrusionDepth: 0.03, font: .systemFont(ofSize: 0.05), containerFrame: .zero, alignment: .center, lineBreakMode: .byCharWrapping)
+            let material = SimpleMaterial(color: .lightGray, roughness: 0.15, isMetallic: true)
             model.components.set(ModelComponent(mesh: mesh, materials: [material]))
             model.position = [0, 0.05, 0]
+       
             
+
             // Store reference to the model for later updates
-            
-            
-            let model2 = Entity()
-            let mesh2 = MeshResource.generateSphere(radius: 0.1)
-            let material2 = SimpleMaterial(color: .gray, roughness: 0.15, isMetallic: true)
-            model2.components.set(ModelComponent(mesh: mesh2, materials: [material2]))
-            model2.position = [0, 0.4, 0]
-            
-            
-            let model3 = Entity()
-            let mesh3 = MeshResource.generateText("Hello World!", extrusionDepth: 0.03, font: .systemFont(ofSize: 0.05), containerFrame: .zero, alignment: .center, lineBreakMode: .byCharWrapping)
-            let material3 = SimpleMaterial(color: .gray, roughness: 0.15, isMetallic: true)
-            model3.components.set(ModelComponent(mesh: mesh3, materials: [material3]))
-            model3.position = [0, 0.25, 0]
-            
-            // Store reference to the model for later updates
-            mercedesModel = try? Entity.load(named: "Mercedes-Benz_Maybach_2022")
-            
+            let carModel = try? Entity.load(named: carsViewModel.cars[carSelected].assetName3D)
+            carModel?.scale = SIMD3(0.1, 0.1, 0.1)
             
             // Create horizontal plane anchor for the content
             let anchor = AnchorEntity(.plane(.horizontal, classification: .any, minimumBounds: SIMD2<Float>(0.2, 0.2)))
-            anchor.addChild(mercedesModel ?? model)
+            anchor.addChild(carModel ?? model)
          //   anchor.addChild(model2)
          //   anchor.addChild(model3)
 
@@ -60,18 +58,6 @@ struct ContentView : View {
 
         }
         .edgesIgnoringSafeArea(.all)
-        .onTapGesture { tapGesture in
-            // Update the stored material
-            boxMaterial = SimpleMaterial(color: .random, roughness: 0.15, isMetallic: true)
-            
-            // Update the model's material directly
-            if let model = mercedesModel {
-                let mesh = MeshResource.generateBox(size: 0.1, cornerRadius: 0.005)
-                model.components.set(ModelComponent(mesh: mesh, materials: [boxMaterial]))
-            }
-            
-            print("Tap detected!")
-        }
         
         
     }
