@@ -16,4 +16,12 @@ struct Car: Identifiable, Codable, Equatable {
     var description: String
 }
 
-
+struct CarParameters {
+    
+    var carX:Float = 0
+    var carY:Float = 0
+    var carZ:Float = 0
+    var carScale:Float = 1
+    var carRotation:Float = 0
+    
+}
