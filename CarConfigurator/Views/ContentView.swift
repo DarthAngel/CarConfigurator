@@ -14,7 +14,7 @@ struct ContentView : View {
 
     // MARK: - PROPERTIES
     
-    @State private var carParameters: CarParameters = CarParameters()
+   
    
     @State private var carSelected = 0
     @State private var currentAnchor: AnchorEntity?
@@ -57,7 +57,7 @@ struct ContentView : View {
                 content.camera = .spatialTracking
                 
             } update: { content in
-                // Update the model when carSelected or carParameters changes
+                // Update the model when carSelected changes
                 guard let anchor = currentAnchor else { return }
                 
                 // Create a new fallback model for updates
@@ -75,7 +75,6 @@ struct ContentView : View {
                 }
             }
             .edgesIgnoringSafeArea(.all)
-            .id("\(carSelected)-\(carParameters.carScale)-\(carParameters.carRotation)")
             
         // MARK: - LABEL BUTTONS LAYER
             
@@ -91,44 +90,29 @@ struct ContentView : View {
                 HStack {
                     
                     Button(action: {
-                        showCarSelector.toggle()
-                    }) {
-                        Image(systemName: "car")
-                            .font(.largeTitle)
-                            .glassEffect()
-                            
-                    }
-                    .padding(15)
-                    .buttonStyle(PlainButtonStyle())
-                    .sheet(isPresented: $showCarSelector, content: {
-                        CarSelectorView(carSelected: $carSelected, cars: $carsViewModel.cars)
-                            .presentationDetents([.medium])
-                            .presentationDragIndicator(.visible)
-                            
-                    })
+                                          showCarSelector.toggle()
+                                      }) {
+                                          Image(systemName: "car")
+                                              .font(.largeTitle)
+                                              .glassEffect()
+                                              
+                                      }
+                                      .padding(15)
+                                      .buttonStyle(PlainButtonStyle())
+                                      .sheet(isPresented: $showCarSelector, content: {
+                                          CarSelectorView(carSelected: $carSelected, cars: $carsViewModel.cars)
+                                              .presentationDetents([.medium])
+                                              .presentationDragIndicator(.visible)
+                                              
+                                      })
                     
                     
-                    Spacer(minLength: 2)
+                    Spacer()
                     
                     
                     
                  
-                    Button(action: {
-                        showConfig.toggle()
-                    }) {
-                        Image(systemName: "gearshape")
-                            .font(.largeTitle)
-                            .glassEffect()
-                            
-                    }
-                    .padding(15)
-                    .buttonStyle(PlainButtonStyle())
-                    .sheet(isPresented: $showConfig, content: {
-                        ConfigView(carParameters: $carParameters)
-                            .presentationDetents([.medium])
-                            .presentationDragIndicator(.visible)
-                            
-                    })
+                   
                     
                 }
                 .padding(.horizontal, 25)
@@ -148,11 +132,10 @@ struct ContentView : View {
             
             // AMG GT 63 has different dimensions
             if carSelected == 3 {
-                loadedModel.scale = SIMD3(carParameters.carScale/50, carParameters.carScale/50, carParameters.carScale/50)
+                loadedModel.scale = SIMD3(0.002, 0.002, 0.002)
             } else {
-                loadedModel.scale = SIMD3(carParameters.carScale, carParameters.carScale, carParameters.carScale)
+                loadedModel.scale = SIMD3(0.1, 0.1, 0.1)
             }
-            loadedModel.transform.rotation = simd_quatf(angle: carParameters.carRotation / 2, axis: SIMD3(0, 1, 0))
             anchor.addChild(loadedModel)
             print("Loaded car model: \(carsViewModel.cars[carSelected].name)")
         } catch {
