@@ -89,8 +89,8 @@ struct ContentView : View {
                             let translation = value.translation
                             let scaleFactor: Float = 0.00005 // Reduced for more precise control
                             
-                            carEntity.position.z -= Float(translation.width) * scaleFactor
-                            carEntity.position.x += Float(translation.height) * scaleFactor
+                            carEntity.position.x += Float(translation.width) * scaleFactor
+                            carEntity.position.z += Float(translation.height) * scaleFactor
                         },
                     
                     SimultaneousGesture(
