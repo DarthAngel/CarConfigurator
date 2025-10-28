@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct CarSelectorView: View {
+    
+        // MARK: - PROPERTIES
         
         @Binding var carSelected: Int
         @Binding var cars: [Car]
+        
+        // MARK: - BODY
         
         var body: some View {
             VStack {
@@ -35,5 +39,5 @@ struct CarSelectorView: View {
     }
 
     #Preview {
-        CarSelectorView(carSelected: .constant(0), cars: .constant([]))
+        CarSelectorView(carSelected: .constant(0), cars: .constant([carPlaceHolder]))
     }
